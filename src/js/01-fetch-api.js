@@ -14,25 +14,33 @@
  */
 
 import '../css/common.css';
+import API from './api-service';
+import getRefs from './get-refs';
 // import Handlebars from 'handlebars';
 // const template = Handlebars.compile('Name: {{name}}');
 // console.log(template({ name: 'Nils' }));
 // import pokemonCardTpl from '../templates/pokemon-card.hbs';
 
-const refs = {
-  cardContainer: document.querySelector('.js-card-container'),
-};
+const refs = getRefs();
 
-fetchPokemon(3)
-  .then(renderPokemonCard)
-  .catch(error => console.log(error));
+refs.searchForm.addEventListener('submit', onSearch);
+
+function onSearch(e) {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const searchQuery = form.elements.query.value;
+
+  API.fetchPokemon(searchQuery)
+    .then(renderPokemonCard)
+    .catch(onFetchError)
+    .finally(() => form.reset());
+}
 
 function fetchPokemon(pokemonId) {
-  return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`).then(
-    response => {
-      return response.json();
-    }
-  );
+  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+
+  return fetch(url).then(responce => responce.json());
 }
 
 function renderPokemonCard(pokemon) {
@@ -54,6 +62,15 @@ function renderPokemonCard(pokemon) {
 </div>`;
 }
 
+function onFetchError(error) {
+  alert('Упс, что-то пошло не так, мы не нашли вашего покемона!!!');
+}
+
+fetch(
+  'https://pixabay.com/api/?key=38440528-27ad43a15fe64cab61d6047d1&q=dog+flowers&image_type=photo&orientation=vertical'
+)
+  .then(r => r.json())
+  .then(console.log());
 // import API from './api-service';
 // import getRefs from './get-refs';
 
