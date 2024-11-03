@@ -66,9 +66,14 @@ function onFetchError(error) {
   alert('Упс, что-то пошло не так, мы не нашли вашего покемона!!!');
 }
 
-fetch(
-  'https://pixabay.com/api/?key=38440528-27ad43a15fe64cab61d6047d1&q=dog+flowers&image_type=photo&orientation=vertical'
-)
+const url = 'https://newsapi.org/v2/everything?q=cars';
+const options = {
+  headers: {
+    Authorization: 'fd4551f039144e50830dcd0945213250',
+  },
+};
+
+fetch(url, options)
   .then(r => r.json())
   .then(console.log());
 // import API from './api-service';
