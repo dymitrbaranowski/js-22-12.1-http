@@ -1,14 +1,43 @@
 import '../css/common.css';
+// import moduleName from './components/load-more-btn';
 
-const options = {
-  headers: {
-    Authorization: 'fd4551f039144e50830dcd0945213250',
-  },
+import NewsApiService from './news-service';
+
+const refs = {
+  searchForm: document.querySelector('.js-search-form'),
+  articlesContainer: document.querySelector('.js-articles-container'),
+  loadMoreBtn: document.querySelector('[data-action="load-more"]'),
 };
+const newsApiService = new NewsApiService();
 
-const url =
-  'https://newsapi.org/v2/everything?q=cat&language=en&pageSize=5&page=1';
+refs.searchForm.addEventListener('submit', onSearch);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-fetch(url, options)
-  .then(r => r.json())
-  .then(console.log);
+function onSearch(e) {
+  e.preventDefault();
+
+  newsApiService.query = e.currentTarget.elements.query.value;
+  newsApiService.resetPage();
+  newsApiService.fetchArticles().then(articles =>
+    articles
+      .map(
+        ({ url, urlToImage, title, author, description }) => `  <li>
+        <a href="${url}" target="_blank" rel="noopener noreferrer">
+            <article>
+                <img src="${urlToImage}" alt="" width="480">
+                <h2>${title}</h2>
+                <p>Postet by: ${author}</p>
+                <p>${description}</p>
+            </article>
+        </a>
+      </li>`
+      )
+      .join('')
+  );
+}
+
+function onLoadMore() {
+  newsApiService.fetchArticles().then();
+}
+
+// refs.articlesContainer.insertAdjacentHTML('beforeend');
